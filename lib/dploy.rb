@@ -3,16 +3,12 @@
 # prevent loading when called by Bundler, only load when called by capistrano
 if caller.any? { |callstack_line| callstack_line =~ /^Capfile:/ }
   all_capistrano_extensions = [
-    "capistrano-catch-output",
     "capistrano-deployment-tasks",
-    "capistrano-mailer",
     "capistrano-minimal-output",
     "capistrano-multistage",
     "capistrano-optimized-git-deploy",
-    "capistrano-scoped-variables",
     "capistrano-smart-deploy",
-    "capistrano-stacks",
-    "capistrano-variables-namespaces-list"
+    "capistrano-stacks"
   ]
   load_capistrano_extensions = []
 
