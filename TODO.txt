@@ -1,14 +1,19 @@
 CAPISTRANO:
 
+1.0.0:
+
 - unit tests
 - push
 -- commit message: "implemented unit tests"
 
-- documentation
-
---
+1.1.0:
 
 - auto choice of framework based on investigation (i.e. checking Gemfile for deps: mysql2 gem, rails gem, etc)
 - use generators for generating deployment-tasks scripts
 - auto load of extensions by capistrano, much like bundler ? ($AUTO_LOAD_CAP_EXTENSIONS which gets extended by extensions themselves, possibly a $NO_AUTO_LOAD_CAP_EXTENSIONS which can be set by the user somewhere to prevent loading of certain extensions)
 - checking whether a file is being loaded by capistrano or something else (something like $CAPISTRANO_IS_LOADING boolean)
+
+--
+
+- documentation
+
