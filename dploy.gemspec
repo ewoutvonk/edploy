@@ -3,7 +3,7 @@ $:.push File.expand_path("../lib", __FILE__)
 
 Gem::Specification.new do |s|
   s.name        = "dploy"
-  s.version     = "0.9.9.2"
+  s.version     = "1.0"
   s.authors     = ["Ewout Vonk"]
   s.email       = ["dev@ewout.to"]
   s.homepage    = "https://github.com/ewoutvonk/dploy"
@@ -18,10 +18,4 @@ Gem::Specification.new do |s|
   s.require_paths = ["lib"]
 
   s.add_runtime_dependency "capistrano"
-  s.add_runtime_dependency "capistrano-deployment-tasks"
-  s.add_runtime_dependency "capistrano-minimal-output"
-  s.add_runtime_dependency "capistrano-multistage"
-  s.add_runtime_dependency "capistrano-optimized-git-deploy"
-  s.add_runtime_dependency "capistrano-smart-deploy"
-  s.add_runtime_dependency "capistrano-stacks"
 end

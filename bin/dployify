@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-# Copyright (c) 2009-2011 by Ewout Vonk. All rights reserved.
+# Copyright (c) 2009-2012 by Ewout Vonk. All rights reserved.
 
-require 'dploy/dployify/cli'
+require 'dploy/cli/dployify'
 Dployify::Cli.new(ARGV)
