@@ -1,0 +1,74 @@
+#!/usr/bin/env ruby
+
+require 'dployscripts'
+require 'fileutils'
+
+FileUtils.mkdir_p(SHARED_PATH)
+FileUtils.mkdir_p(GLUSTERFS_PATH)
+
+sudo_mkdir_p = []
+mkdir_p = []
+sudo_chown = []
+rm_rf = []
+cp_a = {}
+sudo_ln_nfs = {}
+ln_nfs = {}
+commands = []
+
+SYMLINK_DURING_DEPLOY.each do |source_template, target_template|
+  is_dir_symlink = source_template.end_with?('/')
+  source = source_template.gsub(/:[^\/]+/) { |s| Kernel.const_get(s[1..-1].upcase.to_sym) }.gsub(/\/$/, '')
+  target = target_template.gsub(/:[^\/]+/) { |s| Kernel.const_get(s[1..-1].upcase.to_sym) }
+  
+  target_is_inside_project = target.start_with?(DEPLOY_TO)
+  source_is_inside_project = source.start_with?(DEPLOY_TO)
+  if is_dir_symlink
+		unless File.exists?(source)
+			if source_is_inside_project
+				mkdir_p << source
+			else
+				sudo_mkdir_p << source
+			end
+			sudo_chown << source
+		end
+		rm_rf << target if File.exists?(target) && !File.symlink?(target) && is_inside_project
+  end
+	if target_is_inside_project
+		ln_nfs[source] = target
+	else
+		sudo_ln_nfs[source] = target
+	end
+end
+
+stage_host_files_dir = File.join(PROJECT_PATH, 'config', 'dploy', 'copy', 'project_files', STAGE, MY_HOSTNAME)
+stage_role_files_dir = File.join(PROJECT_PATH, 'config', 'dploy', 'copy', 'project_files', STAGE, MY_HOSTNAME_WITHOUT_INDEX)
+stage_files_dir = File.join(PROJECT_PATH, 'config', 'dploy', 'copy', 'project_files', STAGE)
+stage_host_files_to_copy = Dir[File.join(stage_host_files_dir, '*')].map { |entry| entry.sub(/^#{stage_host_files_dir}\//, '') }
+stage_role_files_to_copy = Dir[File.join(stage_role_files_dir, '*')].map { |entry| entry.sub(/^#{stage_role_files_dir}\//, '') }
+stage_files_to_copy = Dir[File.join(stage_files_dir, '*')].reject { |entry| [ MY_HOSTNAME, MY_HOSTNAME_WITHOUT_INDEX ].include?(File.basename(entry)) }.map { |entry| entry.sub(/^#{stage_files_dir}\//, '') }
+
+{
+  stage_host_files_dir => stage_host_files_to_copy,
+  stage_role_files_dir => stage_role_files_to_copy,
+  stage_files_dir => stage_files_to_copy
+}.each do |base_source_dir, file_list|
+  file_list.each do |file|
+		mkdir_p << File.join(PROJECT_PATH, File.dirname(file))
+		cp_a[File.join(base_source_dir, file)] = File.join(PROJECT_PATH, File.dirname(file), '/')
+  end
+end
+
+commands = [
+	"sudo mkdir -p #{sudo_mkdir_p.join(' ')}",
+	"mkdir -p #{mkdir_p.join(' ')}",
+	"sudo chown #{DEPLOY_USER}:#{DEPLOY_GROUP} #{sudo_chown.join(' ')}",
+	"rm -rf #{rm_rf.join(' ')}"
+] + cp_a.map { |source, target| "cp -a #{source} #{target}" } +
+		sudo_ln_nfs.map { |source, target| "sudo ln -nfs #{source} #{target}" } +
+		ln_nfs.map { |source, target| "ln -nfs #{source} #{target}" }
+
+commands.each do |cmd|
+  puts cmd
+end
+
+system cmd.join(' ; ') or abort "#{$0} failed"

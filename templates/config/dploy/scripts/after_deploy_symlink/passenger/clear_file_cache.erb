@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby
+
+require 'dployscripts'
+require 'fileutils'
+
+puts "Clearing local file cache..."
+FileUtils.rm_rf(Dir['tmp/cache/[^.]*'])

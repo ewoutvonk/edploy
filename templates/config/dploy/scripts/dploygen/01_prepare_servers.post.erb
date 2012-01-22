@@ -1,0 +1,12 @@
+#!/usr/bin/env ruby
+
+REQUIRE_BUNDLE_EXEC = true
+require 'dployscripts'
+
+location = File.join(::RAILS_ROOT, 'config', 'dploy', 'stages')
+stages = Dir["#{location}/*.rb"].map { |f| File.basename(f, ".rb") }
+
+stages.each do |stage|
+  system("cap #{stage} fast_remote_cache:setup")
+  system("cap #{stage} fast_remote_cache:prepare")
+end

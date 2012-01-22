@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+
+# Copyright (c) 2009-2011 by Ewout Vonk. All rights reserved.
+
+require 'dploy/cli/dploy'
+Dploy::Cli.new(ARGV)

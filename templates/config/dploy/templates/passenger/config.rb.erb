@@ -1,0 +1,3 @@
+set(:passenger_document_root) { "#{current_path}/public" }
+set(:passenger_app_root) { current_path }
+set(:passenger_log_name) { "#{(stage == :testmachine ? "test" : stage.to_s)}" }

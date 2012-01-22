@@ -1,0 +1,2 @@
+sudo "ln -nsf #{deploy_to}/passenger/apache_vhost /etc/apache2/sites-available/#{application}"
+sudo "a2ensite #{application}"

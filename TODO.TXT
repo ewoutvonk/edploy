@@ -1,0 +1,1 @@
+- minimal_output integrated with hooks like deploy hooks, but then for output

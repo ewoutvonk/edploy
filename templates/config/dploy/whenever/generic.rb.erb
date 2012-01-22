@@ -1,0 +1,13 @@
+# This crontab definition file is not used directly! It is a base definition for all *.rb defs
+# only put crontabs here that should run on ALL servers
+
+env :MAILTO, 'cron@truvolabs.com'
+set :output, {:standard => nil}
+set :path, "/apps/sayso/current"
+
+set :job_template, "rvm_silence_logging=1 /bin/bash -l -c ':job'"
+
+job_type :debug_rake, "cd :path && STAGE=:stage APP=sayso RAILS_ENV=:environment bundle exec rake :task --trace :output"
+job_type :rake,    "cd :path && THREAD_COUNT=2 STAGE=:stage APP=sayso RAILS_ENV=:environment bundle exec rake :task --silent :output"
+job_type :db_events_load_all, "cd :path && RAILS_ENV=:environment bundle exec rake db:events:load_all --silent :output"
+job_type :command_with_path, "cd :path ; :task"

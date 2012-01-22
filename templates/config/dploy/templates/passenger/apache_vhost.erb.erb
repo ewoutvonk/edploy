@@ -1,0 +1,190 @@
+<IfModule passenger_module>
+  <VirtualHost *:80>
+    ServerName <%%= domain.to_s %>
+    <%% if stage == :production %>
+    ServerAlias sayso.*
+    ServerAlias *.sayso.*
+    <%% else %>
+    ServerAlias <%%= passenger_log_name.to_s %>.sayso.*
+    ServerAlias *.<%%= passenger_log_name.to_s %>.sayso.*
+    <%% end %>
+
+    DocumentRoot "<%%= passenger_document_root.to_s %>"
+    PassengerAppRoot "<%%= passenger_app_root.to_s %>"
+
+    LogLevel warn
+    LogFormat "%{X-Forwarded-For}i %l %u %t \"%r\" %>s %b \"%{Referer}i\" \"%{User-Agent}i\" (%D)" haproxycombined
+    LogFormat "%h %l %u %t \"%r\" %>s %b (%D)" truvocommon
+    SetEnvIf Request_URI "^/check\.txt$" dontlog
+    CustomLog "|/usr/local/bin/syslogger user apache-access-sayso-<%%= passenger_log_name.to_s %> notice" <%%= stage == :production ? "haproxycombined" : "truvocommon" %> env=!dontlog
+    ErrorLog "|/usr/local/bin/syslogger user apache-errors-sayso-<%%= passenger_log_name.to_s %> warning"
+
+    RackEnv <%%= rails_env.to_s %>
+
+    RewriteEngine On
+
+    RewriteCond %{HTTP_HOST} !\.(be|pt|ie|com)$ [NC]
+    RewriteCond %{REQUEST_URI} robots.txt
+    RewriteRule ^/.*$ /robots-disallow-all.txt [L]
+
+    RewriteCond %{HTTP_HOST} !^(www\.|m\.) [NC]
+    RewriteCond %{REQUEST_URI} robots.txt
+    RewriteRule ^/.*$ /robots-disallow-all.txt [L]
+
+    RewriteCond %{HTTP_HOST} ^i(phone)?\. [NC]
+    RewriteCond %{HTTP_HOST} \.(be|pt|ie)$ [NC]
+    RewriteRule ^.*$ http://www.<%%= stage == :production ? "" : passenger_log_name.to_s + "." %>sayso.%1/mobile [L,R=301]
+    RewriteRule ^/iphone /mobile [L,R=301]
+    RewriteRule ^/mobile/$ /mobile [L,R=301]
+
+    RewriteRule ^/(en|nl|pt|fr)(/email/images/.*)$ $2 [L]
+
+    RewriteCond %{HTTP:X-Requested-With} !^XMLHttpRequest$
+    RewriteCond %{QUERY_STRING} (^|&)tab=reviews(&|$)
+    RewriteRule ^(.*-p[0-9]+\/?)$ $1? [R=301,L]
+
+    RewriteCond %{HTTP:X-Requested-With} !^XMLHttpRequest$
+    RewriteCond %{QUERY_STRING} (^|&)tab=activities(&|$)
+    RewriteRule ^(.*/users/.*)$ $1? [R=301,L]
+
+    RewriteCond %{HTTP:X-Requested-With} !^XMLHttpRequest$
+    RewriteCond %{QUERY_STRING} (^|&)tab=comments(&|$)
+    RewriteRule ^(.*/review/.*)$ $1? [R=301,L]
+
+    RewriteRule ^/home/privacy$ /privacy [L,R=301]
+    RewriteRule ^/home/privacy/(.*)$ /privacy/$1 [L,R=301]
+
+    RewriteCond %{REQUEST_URI} !google[0-9a-fA-F]+\.html$
+    RewriteCond %{HTTP_HOST} ^(.*)\.com.pt$ [NC]
+    RewriteRule ^(.*)$ http://%1.pt$1 [L,R=301]
+
+    RewriteCond %{REQUEST_URI} !google[0-9a-fA-F]+\.html$
+    RewriteCond %{HTTP_HOST} !^(www\.|mobile\.|m\.|iphone\.|i\.|api\.|app|assets|localhost|static) [NC]
+    RewriteCond %{HTTP_HOST} ^(.*)$ [NC]
+    RewriteRule ^(.*)$ http://www.%1$1 [L,R=301]
+
+    RewriteCond %{HTTP_HOST} !\.(be|pt|ie)$ [NC]
+    RewriteCond %{HTTP_HOST} !^api [NC]
+    RewriteCond %{REQUEST_URI} !\.(css|jpg|png|js|gif)$
+    RewriteRule ^/.+$ / [L,R=404]
+
+    RewriteCond %{HTTP_HOST} !\.(be|pt|ie)$ [NC]
+    RewriteCond %{HTTP_HOST} !^api [NC]
+    RewriteCond %{REQUEST_URI} !\.(css|jpg|png|js|gif)$
+    RewriteRule ^/$ /redirecting.html [L]
+
+    RewriteCond %{REQUEST_URI} check.txt
+    RewriteCond %{DOCUMENT_ROOT}/check.txt !-f
+    RewriteRule ^(.*)$ $1 [L,R=404]
+
+    RewriteCond %{HTTP_HOST} ^(.*)$ [NC]
+    RewriteRule ^/(sitemap\..*\.xml.*)$ http://%1/sitemaps/$1 [P]
+    RewriteCond %{HTTP_HOST} ^(.*)$ [NC]
+    RewriteRule ^/(sitemap_.*\.xml.*)$ http://%1/sitemaps/$1 [P]
+
+    RewriteCond %{HTTP_HOST} ^mobile\.(.*)$ [NC]
+    RewriteRule ^(.*)$ http://m.%1$1 [L,R=301]
+
+    # START Stuart's rewrites
+    RewriteCond %{QUERY_STRING} (^|&)filter=([^&$]+)(&|$)
+    RewriteRule ^(/locations/[^\/]+/activities)$ $1?activity_filters[]=%2 [L,R=301]
+    RewriteCond %{QUERY_STRING} (^|&)filter=([^&$]+)(&|$)
+    RewriteRule ^(/cities/[^\/]+/activities)$ $1?activity_filters[]=%2 [L,R=301]
+    RewriteRule ^(/locations/[^\/]+)/category(.*)$ $1/categories$2 [L,R=301]
+    RewriteRule ^(/cities/[^\/]+)/category(.*)$ $1/categories$2 [L,R=301]
+    RewriteRule ^(/locations/[^\/]+)/reviews$ $1/activities [L,R=301]
+    RewriteRule ^(/cities/[^\/]+)/reviews$ $1/activities [L,R=301]
+    RewriteRule ^/locations(.*)$ /cities$1 [L,R=301]
+    RewriteRule ^/(home|site)/help(.*)$ /home/faq$2 [L,R=301]
+    RewriteRule ^/site/(.*)$ /home/$1 [L,R=301]
+    RewriteRule ^/site$ /home [L,R=301]
+    RewriteCond %{QUERY_STRING} (^|&)order=descend_by_reviews_count(&|$)
+    RewriteCond %{QUERY_STRING} (^|&)search_who=([^&$]+)(&|$)
+    RewriteRule ^/users/search /users/search?search[search_who]=%2&search[search_where]=&search[order]=reviews_count+desc&commit=Find [L,R=301]
+    RewriteCond %{QUERY_STRING} (^|&)order=descend_by_points(&|$)
+    RewriteCond %{QUERY_STRING} (^|&)search_who=([^&$]+)(&|$)
+    RewriteRule ^/users/search /users/search?search[search_who]=%2&search[search_where]=&search[order]=points+desc&commit=Find [L,R=301]
+    RewriteCond %{QUERY_STRING} (^|&)order=descend_by_followers_count(&|$)
+    RewriteCond %{QUERY_STRING} (^|&)search_who=([^&$]+)(&|$)
+    RewriteRule ^/users/search /users/search?search[search_who]=%2&search[search_where]=&search[order]=followers_count+desc&commit=Find [L,R=301]
+    RewriteCond %{QUERY_STRING} (^|&)order=descend_by_created_at(&|$)
+    RewriteCond %{QUERY_STRING} (^|&)search_who=([^&$]+)(&|$)
+    RewriteRule ^/users/search /users/search?search[search_who]=%2&search[search_where]=&search[order]=created_at+desc&commit=Find [L,R=301]
+    RewriteCond %{QUERY_STRING} (^|&)order=descend_by_likings_count(&|$)
+    RewriteCond %{QUERY_STRING} (^|&)search_who=([^&$]+)(&|$)
+    RewriteRule ^/users/search /users/search?search[search_who]=%2&search[search_where]=&search[order]=compliments_count+desc&commit=Find [L,R=301]
+    RewriteCond %{QUERY_STRING} (^|&)order=([^&$]+)(&|$)
+    RewriteCond %{QUERY_STRING} !(^|&)order=(descend_by_reviews_count|descend_by_points|descend_by_followers_count|descend_by_created_at|descend_by_likings_count)(&|$)
+    RewriteCond %{QUERY_STRING} (^|&)search_who=([^&$]+)(&|$)
+    RewriteRule ^/users/search /users/search?search[search_who]=%2&search[search_where]=&search[order]=created_at+desc&commit=Find [L,R=301]
+    # END Stuart's rewrites
+
+    RewriteCond %{REQUEST_URI} !\.(css|jpg|png)$
+    RewriteCond %{REQUEST_URI} !server-status/?$
+    RewriteCond %{HTTP_HOST} ^api\. [NC]
+    RewriteCond %{DOCUMENT_ROOT}/system/maintenance.html -f
+    RewriteCond %{SCRIPT_FILENAME} !maintenance.html
+    RewriteRule ^/.*$ /system/maintenance.html [L,R=503]
+
+    RewriteCond %{REQUEST_URI} !\.(css|jpg|png)$
+    RewriteCond %{REQUEST_URI} !server-status/?$
+    RewriteCond %{HTTP_USER_AGENT} Googlebot|Googlebot-Mobile|Googlebot-Image|Mediapartners-Google|Adsbot-Google|Msnbot|Slurp|Teoma|^$ [NC]
+    RewriteCond %{HTTP_HOST} !^(app) [NC]
+    RewriteCond %{DOCUMENT_ROOT}/system/maintenance.html -f
+    RewriteCond %{SCRIPT_FILENAME} !maintenance.html
+    RewriteRule ^/.*$ /system/maintenance.html [L,R=503]
+
+    RewriteCond %{HTTP:X-Requested-With} ^XMLHttpRequest$
+    RewriteCond %{DOCUMENT_ROOT}/system/maintenance.html -f
+    RewriteCond %{SCRIPT_FILENAME} !maintenance.html
+    RewriteRule ^/.*$ /system/maintenance.html [L,R]
+
+    RewriteCond %{REQUEST_URI} !\.(css|jpg|png)$
+    RewriteCond %{REQUEST_URI} !server-status/?$
+    RewriteCond %{HTTP_USER_AGENT} !(TruvoLabs) [NC]
+    RewriteCond %{DOCUMENT_ROOT}/system/maintenance.html -f
+    RewriteCond %{SCRIPT_FILENAME} !maintenance.html
+    RewriteRule ^/.*$ /system/maintenance.html [L,E=addxreloadheader]
+
+    SetEnvIf Request_URI "^/system/maintenance.html$" addxreloadheader
+    Header add X-Reload "1" env=addxreloadheader
+
+    <Proxy *>
+      AddDefaultCharset off
+      Order deny,allow
+      Allow from localhost
+    </Proxy>
+
+    <FilesMatch "\.(js|css)$">
+      ExpiresActive On
+      ExpiresDefault "access plus 1 year"
+    </FilesMatch>
+
+    <FilesMatch "\.(ico|gif|jpe?g|png)$">
+      ExpiresActive On
+      ExpiresDefault "access plus 1 year"
+      FileETag INode MTime
+    </FilesMatch>
+
+    <%% if [ :staging, :tryout ].include?(stage.to_sym) %>
+    UserDir disabled
+    UserDir enabled tl
+    UserDir public_html
+
+    <Location "/~tl">
+      PassengerEnabled off
+    </Location>
+
+    <directory "public_html">
+      Options +Indexes
+    </directory>
+    <%% end %>
+
+    <Directory "<%%= passenger_document_root.to_s %>">
+      Order allow,deny
+      Allow from all
+      AddOutputFilterByType DEFLATE text/html
+    </Directory>
+  </VirtualHost>
+</IfModule>
+
