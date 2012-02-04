@@ -11,7 +11,7 @@ def run_process(cmd, target_file)
     err_output = stderr.read
     std_output = stdout.readlines.map { |line| line =~ /^## \[message\] / ? nil : line.strip }.compact.join("\n").strip + "\n"
     if err_output.empty?
-      File.open(target_file, "w") { |f| f.write std_output }
+      File.open(target_file, "w") { |f| f.write std_output.gsub(RAILS_ROOT, File.join(DEPLOY_TO, 'current')) }
     else
       abort "error while running: #{cmd}\n#{err_output}"
     end
@@ -26,11 +26,11 @@ Dir["#{RAILS_ROOT}/config/dploy/whenever/*.rb"].entries.each do |crontab_def_fil
   
   base_target_dir = File.join(RAILS_ROOT, 'config', 'dploy', 'copy', 'project_files', stage)
   target_dir = config_base_name == stage ? base_target_dir : File.join(base_target_dir, "#{config_base_name}")
-  target_file = File.join(target_dir, 'config', "sayso.cron")
+  target_file = File.join(target_dir, 'config', "<%= application %>_cron")
 
   FileUtils.mkdir_p(target_dir)
   cmd = "whenever -f #{crontab_def_file}"
   run_process(cmd, target_file)
 end
 
-system("git add #{RAILS_ROOT}/config/dploy/copy/project_files/production/*/config/*.cron #{RAILS_ROOT}/config/dploy/copy/project_files/{staging,testmachine,qa,tryout}/config/*.cron")
+system("git add #{RAILS_ROOT}/config/dploy/copy/project_files/production/*/config/*_cron #{RAILS_ROOT}/config/dploy/copy/project_files/{staging,testmachine,qa,tryout}/config/*_cron")

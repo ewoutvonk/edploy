@@ -58,17 +58,17 @@ stage_files_to_copy = Dir[File.join(stage_files_dir, '*')].reject { |entry| [ MY
   end
 end
 
-commands = [
-	"sudo mkdir -p #{sudo_mkdir_p.join(' ')}",
-	"mkdir -p #{mkdir_p.join(' ')}",
-	"sudo chown #{DEPLOY_USER}:#{DEPLOY_GROUP} #{sudo_chown.join(' ')}",
-	"rm -rf #{rm_rf.join(' ')}"
-] + cp_a.map { |source, target| "cp -a #{source} #{target}" } +
-		sudo_ln_nfs.map { |source, target| "sudo ln -nfs #{source} #{target}" } +
-		ln_nfs.map { |source, target| "ln -nfs #{source} #{target}" }
+commands = []
+commands << "sudo mkdir -p #{sudo_mkdir_p.uniq.join(' ')}" unless sudo_mkdir_p.empty?
+commands << "mkdir -p #{mkdir_p.uniq.join(' ')}" unless mkdir_p.empty?
+commands << "sudo chown #{DEPLOY_USER}:#{DEPLOY_GROUP} #{sudo_chown.uniq.join(' ')}" unless sudo_chown.empty?
+commands << "rm -rf #{rm_rf.uniq.join(' ')}" unless rm_rf.empty?
+commands += cp_a.map { |source, target| "cp -a #{source} #{target}" }
+commands += sudo_ln_nfs.map { |source, target| "sudo ln -nfs #{source} #{target}" }
+commands += ln_nfs.map { |source, target| "ln -nfs #{source} #{target}" }
 
 commands.each do |cmd|
   puts cmd
 end
 
-system cmd.join(' ; ') or abort "#{$0} failed"
+system commands.join(' ; ') or abort "#{$0} failed"

@@ -39,7 +39,8 @@ module Dployify
 			:group => { :default => 'deploy' },
 			:normalize_asset_timestamps => { :default => false, :boolean => true },
 			:paranoid => { :ssh_option => true, :default => false, :boolean => true },
-			:forward_agent => { :ssh_option => true, :default => true, :boolean => true }
+			:forward_agent => { :ssh_option => true, :default => true, :boolean => true },
+			:notify_email => { :default => Proc.new { |c| "support@#{c[:application]}.com" } }
 		}
 		
 		def configure
@@ -124,6 +125,10 @@ module Dployify
 		
 		def highline
 			@highline ||= HighLine.new
+		end
+
+		def method_missing(method, *args, &block)
+			config[method.to_s] || super
 		end
 		
 	end

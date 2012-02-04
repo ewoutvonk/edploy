@@ -20,7 +20,7 @@ end
 TEMPLATES = {}
 Dir[File.expand_path("../../config/templates/*", __FILE__)].each do |app|
 	TEMPLATES[File.basename(app).to_sym] = {
-		:templates => Dir[File.join(app, '*'.erb)],
+		:templates => Dir[File.join(app, '*.erb')],
 		:config => File.join(app, 'config.rb'),
 		:after_config => File.join(app, 'after_config.rb'),
 		:activate => File.join(app, 'activate.rb'),
