@@ -1,1 +1,19 @@
 - minimal_output integrated with hooks like deploy hooks, but then for output
+
+--
+
+TODO
+
+- move rake task to gem bin script, dploy-gen
+- move recipes to gem, load from config/dploy/recipes.rb
+- create gem bin script dploy which sets up project for deployment
+-- create config/dploy/recipes.rb
+-- create config/dploy/config structure (copy, deploy.yml, etc)
+
+--
+
+- remove config files in shared
+
+- auto deploy from ci to staging, test, qa (build script)
+
+- auto deploy from dev to production (git hook)
