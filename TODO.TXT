@@ -4,11 +4,11 @@
 
 TODO
 
-- move rake task to gem bin script, dploy-gen
-- move recipes to gem, load from config/dploy/recipes.rb
-- create gem bin script dploy which sets up project for deployment
--- create config/dploy/recipes.rb
--- create config/dploy/config structure (copy, deploy.yml, etc)
+- move rake task to gem bin script, edploy-gen
+- move recipes to gem, load from config/edploy/recipes.rb
+- create gem bin script edploy which sets up project for deployment
+-- create config/edploy/recipes.rb
+-- create config/edploy/config structure (copy, deploy.yml, etc)
 
 --
 

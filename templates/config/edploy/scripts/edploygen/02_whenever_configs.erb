@@ -1,0 +1,36 @@
+#!/usr/bin/env ruby
+
+REQUIRE_BUNDLE_EXEC = true
+require 'edployscripts'
+require 'open3'
+require 'fileutils'
+
+def run_process(cmd, target_file)
+  puts "writing #{target_file}.."
+  Open3.popen3(cmd) { |stdin, stdout, stderr|
+    err_output = stderr.read
+    std_output = stdout.readlines.map { |line| line =~ /^## \[message\] / ? nil : line.strip }.compact.join("\n").strip + "\n"
+    if err_output.empty?
+      File.open(target_file, "w") { |f| f.write std_output.gsub(RAILS_ROOT, File.join(DEPLOY_TO, 'current')) }
+    else
+      abort "error while running: #{cmd}\n#{err_output}"
+    end
+  }
+  File.chmod(0755, target_file)
+end
+
+Dir["#{RAILS_ROOT}/config/edploy/whenever/*.rb"].entries.each do |crontab_def_file|
+  config_base_name = File.basename(crontab_def_file, ".rb")
+  next if config_base_name.to_sym == :generic
+  stage = File.readlines(crontab_def_file).grep(/^set :stage/).first.split(", ").last.strip[1..-2]
+  
+  base_target_dir = File.join(RAILS_ROOT, 'config', 'edploy', 'copy', 'project_files', stage)
+  target_dir = config_base_name == stage ? base_target_dir : File.join(base_target_dir, "#{config_base_name}")
+  target_file = File.join(target_dir, 'config', "<%= application %>_cron")
+
+  FileUtils.mkdir_p(target_dir)
+  cmd = "whenever -f #{crontab_def_file}"
+  run_process(cmd, target_file)
+end
+
+system("git add #{RAILS_ROOT}/config/edploy/copy/project_files/production/*/config/*_cron #{RAILS_ROOT}/config/edploy/copy/project_files/{staging,testmachine,qa,tryout}/config/*_cron")

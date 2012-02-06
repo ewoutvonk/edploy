@@ -1,0 +1,24 @@
+#!/usr/bin/env ruby
+
+# Copyright (c) 2009-2012 by Ewout Vonk. All rights reserved.
+
+require 'open3'
+require 'edployify'
+
+abort "Please run this command from the Rails.root" unless File.file?('config/routes.rb')
+RAILS_ROOT = Dir.getwd
+
+if ARGV.include?('prefs')
+	Edployify::Preferences.configure
+else
+	Edployify::Project.before_capify_clean
+	Open3.popen3("capify .") do
+		puts "Running `capify .'"
+	end
+	Edployify::Project.after_capify_clean
+	Edployify::Template.make_dirs
+	Edployify::Configuration.configure
+	Edployify::Template.generate_templates(Edployify::Configuration.binding)
+	puts "[done] edployified!"
+end
+

@@ -1,0 +1,14 @@
+#!/usr/bin/env ruby
+
+require 'edployscripts'
+require 'fileutils'
+
+FileUtils.mkdir_p(SHARED_PATH)
+
+commands = []
+commands << "mkdir -p #{SHARED_PATH}/.bundle"
+commands << "ln -nfs #{SHARED_PATH}/.bundle #{PROJECT_PATH}/.bundle"
+commands << "mkdir -p #{SHARED_PATH}/vendor/bundle"
+commands << "ln -nfs #{SHARED_PATH}/vendor/bundle #{PROJECT_PATH}/vendor/bundle"
+commands << "bundle install --path #{SHARED_PATH}/vendor/bundle --local --without development test || bundle install --path #{SHARED_PATH}/vendor/bundle --without development test"
+system commands.join(' ; ')
