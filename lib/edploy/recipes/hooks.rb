@@ -15,7 +15,7 @@ namespace :edploy do
 
         self.send(milestone, task_name, "edploy:#{script_name}")
         task script_name, options do
-          run "cd #{latest_release} ; RAILS_ENV=#{rails_env} PROJECT_PATH=#{latest_release} DEPLOY_USER=#{user} DEPLOY_GROUP=#{group} config/edploy/scripts/#{subdir}/#{entry}"
+          run "cd #{latest_release} ; RAILS_ENV=#{rails_env} PROJECT_PATH=#{latest_release} DEPLOY_USER=#{user} DEPLOY_GROUP=#{group} bundle exec config/edploy/scripts/#{subdir}/#{entry}"
         end
       end
       
