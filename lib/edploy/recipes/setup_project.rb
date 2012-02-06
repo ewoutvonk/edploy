@@ -1,5 +1,5 @@
-require File.expand_path('../../lib/archive', __FILE__)
-require File.expand_path('../../lib/file_handling', __FILE__)
+require File.expand_path('../../../edployscripts/archive', __FILE__)
+require File.expand_path('../../../edployscripts/file_handling', __FILE__)
 
 namespace :edploy do
   

@@ -8,7 +8,7 @@ TODO
 - move recipes to gem, load from config/edploy/recipes.rb
 - create gem bin script edploy which sets up project for deployment
 -- create config/edploy/recipes.rb
--- create config/edploy/config structure (copy, deploy.yml, etc)
+-- create config/edploy/config structure (copy, dploy.yml, etc)
 
 --
 

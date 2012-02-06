@@ -4,14 +4,15 @@ elsif !File.exists?(File.join(Dir.getwd, 'Capfile'))
   abort "You should run this from the rails root!"
 end
 
+RAILS_ROOT = Dir.getwd
+
 require 'syck'
 
-Syck.load_file(File.expand_path('../../config/deploy.yml', __FILE__)).each do |key, value|
+Syck.load_file(File.join(RAILS_ROOT, 'config', 'edploy', 'edploy.yml')).each do |key, value|
   self.class.const_set(key.to_sym.upcase, value)
 end
 
 GEM_DIR = File.expand_path('../../../', __FILE__)
-RAILS_ROOT = Dir.getwd
 MY_HOSTNAME = `hostname`.strip
 MY_HOSTNAME_WITHOUT_INDEX = `hostname | sed 's/[0-9]$//'`.strip
 

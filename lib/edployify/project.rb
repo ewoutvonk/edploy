@@ -14,6 +14,8 @@ module Edployify
 			end
 
 			def after_capify_clean
+				capfile = File.readlines('Capfile').map { |line| line =~ /load 'config\/deploy'/ ? [ "require 'edploy'\n", line ] : line }.flatten.join('')
+				File.open('Capfile', 'w') { |f| f.write capfile }
 				check_existing_dir(File.join('config', 'deploy'))
 				check_existing_file(File.join('config', 'deploy.rb'))
 			end
