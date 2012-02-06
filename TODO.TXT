@@ -1,4 +1,6 @@
 - minimal_output integrated with hooks like deploy hooks, but then for output
+- heroku style output
+- mailer (mailing of notifications; mailing of actual deploy output)
 
 --
 
@@ -7,5 +9,5 @@
 
 --
 
-- dploy-system gem, with system wide binscript for launching deployes with dploy command, which runs 'bundle exec dploy' which is contained in dploy gem, which in turn runs correct cap deploy..
-- check whether dploy-system is needed, or if we can do with just 1 dploy gem, which is only installed system wide, like with bundler
+- add configuration (enabling) of smart deploys
+- extend dploy script to enable auto-detection of current stage (check current git branch, find stage which has that branch configured for deployment)

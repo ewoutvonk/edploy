@@ -1,6 +1,15 @@
 #!/usr/bin/env ruby
 
-# Copyright (c) 2009-2011 by Ewout Vonk. All rights reserved.
+# Copyright (c) 2009-2012 by Ewout Vonk. All rights reserved.
 
-require 'edploy/cli/edploy'
-Edploy::Cli.new(ARGV)
+abort "Please run this command from the Rails.root" unless File.file?('config/routes.rb')
+
+if ENV['BUNDLE_GEMFILE'].nil? || ENV['BUNDLE_BIN_PATH'].nil?
+  system([ 'bundle', 'exec', File.basename($0), ARGV.first ].compact.join(' '))
+end
+
+def determine_stage
+  stage = ARGV.first || 'staging'
+end
+
+system("cap #{determine_stage} deploy:smart")
