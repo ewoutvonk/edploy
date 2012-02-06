@@ -4,7 +4,7 @@
 # with this file for the complete text of the license.
 # ---------------------------------------------------------------------------
 require 'fileutils'
-location = File.join(RAILS_ROOT, 'config', 'edploy', 'stages')
+location = File.join(rails_root, 'config', 'edploy', 'stages')
 
 unless exists?(:stages)
   set :stages, Dir["#{location}/*.rb"].map { |f| File.basename(f, ".rb") }
