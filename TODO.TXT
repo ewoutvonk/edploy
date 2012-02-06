@@ -17,3 +17,7 @@ TODO
 - auto deploy from ci to staging, test, qa (build script)
 
 - auto deploy from dev to production (git hook)
+
+--
+
+- add bundle_path and bundle_without to deploy.yml + configuration questions
