@@ -1,4 +1,4 @@
-module Dploy
+module Edploy
 	class FileHandling
 	
 		class << self

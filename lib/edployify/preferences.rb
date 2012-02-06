@@ -4,7 +4,7 @@ require 'fileutils'
 # work around problem where HighLine detects an eof on $stdin and raises an err
 HighLine.track_eof = false
 
-module Dployify
+module Edployify
 	
 	class Preferences
 		

@@ -1,4 +1,4 @@
-module Dploy
+module Edploy
 	class Archive
 	
 		class << self

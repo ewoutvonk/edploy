@@ -4,7 +4,7 @@ require 'fileutils'
 # work around problem where HighLine detects an eof on $stdin and raises an err
 HighLine.track_eof = false
 
-module Dployify
+module Edployify
 	
 	class Configuration
 		
@@ -60,7 +60,7 @@ module Dployify
 		def ask_repository(variable, options = {})
 			default = base[variable]
 			unless default
-				preset = Dployify::Preferences.request_preset(:use)
+				preset = Edployify::Preferences.request_preset(:use)
 				project = highline.ask("Git project name (without .git): ") { |q| q.default = config[:application] if config[:application] }
 				default = preset.sub(/\{PROJECT\}/, project)
 				options[:default] = default

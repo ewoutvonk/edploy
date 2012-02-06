@@ -5,5 +5,5 @@ require File.expand_path('../edployscripts/file_handling.rb', __FILE__)
 require File.expand_path('../edployscripts/archive.rb', __FILE__)
 require File.expand_path('../edployscripts/git.rb', __FILE__)
 
-include Dploy::FileHandling
-include Dploy::Archive
+include Edploy::FileHandling
+include Edploy::Archive

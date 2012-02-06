@@ -3,7 +3,7 @@ $:.push File.expand_path("../lib", __FILE__)
 
 Gem::Specification.new do |s|
   s.name        = "edploy"
-  s.version     = "1.0"
+  s.version     = "1.0.2"
   s.authors     = ["Ewout Vonk"]
   s.email       = ["dev@ewout.to"]
   s.homepage    = "https://github.com/ewoutvonk/edploy"

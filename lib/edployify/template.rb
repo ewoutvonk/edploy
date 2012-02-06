@@ -1,7 +1,7 @@
 require 'fileutils'
 require 'erb'
 
-module Dployify
+module Edployify
 	
 	class Dir
 		def initialize(path, base_path)
@@ -68,9 +68,9 @@ module Dployify
 					::Dir["#{TEMPLATES_DIR}/config/edploy/**/*"].each do |fqpn|
 						entry = fqpn.sub(/^#{TEMPLATES_DIR}\//, '')
 						if File.directory?(fqpn)
-							@@entries[:dirs] << Dployify::Dir.new(entry, ::RAILS_ROOT)
+							@@entries[:dirs] << Edployify::Dir.new(entry, ::RAILS_ROOT)
 						elsif entry.end_with?('.erb')
-							@@entries[:templates] << Dployify::Template.new(entry, TEMPLATES_DIR, ::RAILS_ROOT)
+							@@entries[:templates] << Edployify::Template.new(entry, TEMPLATES_DIR, ::RAILS_ROOT)
 						end
 					end
 				end
