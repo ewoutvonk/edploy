@@ -1,5 +1,5 @@
 namespace :edploy do
-  after 'deploy:setup', 'edploy:bundle_install'
+  after 'deploy:update_code', 'edploy:bundle_install'
   task :bundle_install do
     commands = []
     commands << "mkdir -p #{shared_path}/.bundle"
