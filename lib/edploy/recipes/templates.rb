@@ -33,7 +33,7 @@ TEMPLATES.each do |application, data|
 	
 	namespace :edploy do
 		namespace application do
-			after 'deploy:setup', "truvo_deploy:#{application}:config"
+			after 'deploy:setup', "edploy:#{application}:config"
 			desc "Push #{application} config files to server"
 			task :config, :roles => application do
 				data[:templates].each do |template|
