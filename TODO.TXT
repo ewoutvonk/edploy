@@ -2,22 +2,10 @@
 
 --
 
-TODO
-
-- move rake task to gem bin script, edploy-gen
-- move recipes to gem, load from config/edploy/recipes.rb
-- create gem bin script edploy which sets up project for deployment
--- create config/edploy/recipes.rb
--- create config/edploy/config structure (copy, dploy.yml, etc)
-
---
-
-- remove config files in shared
-
-- auto deploy from ci to staging, test, qa (build script)
-
-- auto deploy from dev to production (git hook)
-
---
-
 - add bundle_path and bundle_without to deploy.yml + configuration questions
+- make prepare tasks standard part of deploygen, turn it on/off in deploy.yml
+
+--
+
+- dploy-system gem, with system wide binscript for launching deployes with dploy command, which runs 'bundle exec dploy' which is contained in dploy gem, which in turn runs correct cap deploy..
+- check whether dploy-system is needed, or if we can do with just 1 dploy gem, which is only installed system wide, like with bundler

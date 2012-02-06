@@ -5,10 +5,9 @@
 require 'edployscripts'
 
 abort "Please run this command from the Rails.root" unless File.file?('config/routes.rb')
-RAILS_ROOT = Dir.getwd
 
 def scripts(match_glob = "*", ignore_globs = [])
-  Dir[File.join(::RAILS_ROOT, 'config', 'edploy', 'script', 'edploygen', match_glob)].sort.each do |script_file|
+  Dir[File.join(::RAILS_ROOT, 'config', 'edploy', 'scripts', 'edploygen', match_glob)].sort.each do |script_file|
     script_name = File.basename(script_file)
     next if ignore_globs.any? { |glob| File.fnmatch?(glob, script_name) }
     script script_name
@@ -16,7 +15,7 @@ def scripts(match_glob = "*", ignore_globs = [])
 end
 
 def script(script_name)
-  cmd = File.join(::RAILS_ROOT, 'config', 'edploy', 'script', 'edploygen', script_name.to_s)
+  cmd = File.join(::RAILS_ROOT, 'config', 'edploy', 'scripts', 'edploygen', script_name.to_s)
   system(cmd) or abort "error while running `#{cmd}'"
 end
 
