@@ -2,9 +2,13 @@
 
 # Copyright (c) 2009-2012 by Ewout Vonk. All rights reserved.
 
-require 'edployscripts'
-
 abort "Please run this command from the Rails.root" unless File.file?('config/routes.rb')
+
+if ENV['BUNDLE_GEMFILE'].nil? || ENV['BUNDLE_BIN_PATH'].nil?
+  system([ 'bundle', 'exec', File.basename($0) ].compact.join(' '))
+end
+
+require 'edployscripts'
 
 def scripts(match_glob = "*", ignore_globs = [])
   Dir[File.join(::RAILS_ROOT, 'config', 'edploy', 'scripts', 'edploygen', match_glob)].sort.each do |script_file|

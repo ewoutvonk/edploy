@@ -11,3 +11,7 @@
 
 - add configuration (enabling) of smart deploys
 - extend dploy script to enable auto-detection of current stage (check current git branch, find stage which has that branch configured for deployment)
+
+--
+
+- add process launcher to system wide scripts, which outputs output line-by-line
