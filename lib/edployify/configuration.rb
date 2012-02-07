@@ -13,17 +13,21 @@ module Edployify
 			def configure
 				instance.configure
 			end
-			
-			def binding
-				instance.send(:binding)
+
+			def get_binding
+				instance.get_binding
 			end
-			
+
 			private
 			
 			def instance
 				@@instance ||= self.new
 			end
 			
+		end
+
+		def get_binding
+			binding
 		end
 		
 		CONFIGURATION_KEYS = {
@@ -128,7 +132,7 @@ module Edployify
 		end
 
 		def method_missing(method, *args, &block)
-			config[method.to_s] || super
+			config[method.to_sym] || config[method.to_s] || super
 		end
 		
 	end

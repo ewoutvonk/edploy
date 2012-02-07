@@ -23,7 +23,7 @@ else
 	Edployify::Project.after_capify_clean
 	Edployify::Template.make_dirs
 	Edployify::Configuration.configure
-	Edployify::Template.generate_templates(Edployify::Configuration.binding)
+	Edployify::Template.generate_templates(Edployify::Configuration.get_binding)
 	puts "[done] edployified!"
 end
 
