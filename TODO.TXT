@@ -1,17 +1,8 @@
-- minimal_output integrated with hooks like deploy hooks, but then for output
-- heroku style output
-- mailer (mailing of notifications; mailing of actual deploy output)
-
---
-
-- add bundle_path and bundle_without to deploy.yml + configuration questions
-- make prepare tasks standard part of deploygen, turn it on/off in deploy.yml
-
---
-
-- add configuration (enabling) of smart deploys
-- extend dploy script to enable auto-detection of current stage (check current git branch, find stage which has that branch configured for deployment)
-
---
-
-- add process launcher to system wide scripts, which outputs output line-by-line
+* add bundle_path and bundle_without to deploy.yml + configuration questions
+* make fast_remote_cache prepare tasks standard part of deploygen, turn it on/off in deploy.yml
+* add configuration (enabling) of smart deploys
+* extend dploy script to enable auto-detection of current stage (check current git branch, find stage which has that branch configured for deployment)
+* add process launcher to system wide scripts, which outputs output line-by-line
+* minimal_output integrated with hooks like deploy hooks, but then for output
+* heroku style output
+* mailer (mailing of notifications; mailing of actual deploy output)
